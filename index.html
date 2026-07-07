@@ -1,1 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gra</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="600" height="600" style="border:1px solid #000000;">
+</canvas>
+    <script>
 
+        const canvas = document.querySelector("canvas");
+        const ctx = canvas.getContext("2d");
+
+        const size = 60;
+        var x,y;
+        var px,py;
+        var direction = "right";
+        setInterval(draw, 500);
+   
+
+        let body = [{x: 4, y: 4}, {x: 3, y: 4}, {x: 2, y: 4}];
+
+        let owoce = [];
+
+        function draw() {
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);        
+            ctx.beginPath();
+
+            for (let i = 0; i < body.length; i++) {
+              const segment = body[i];
+               ctx.fillRect(segment.x * size, segment.y * size, size, size);
+              ctx.strokeRect(segment.x * size, segment.y * size, size, size);
+            }          
+
+            ctx.lineTo(x + size, y);
+            ctx.lineTo(x + size, y + size);
+            ctx.lineTo(x, y + size);
+            ctx.closePath();
+            ctx.fillRect(x, y, size, size);
+            ctx.stroke();      
+
+//---------------------------granice------------------------------
+
+            if (direction === "right") {
+                body.unshift({x: body[0].x + 1, y: body[0].y});
+                body.pop();
+            
+
+            if(body[0].x >= 9){
+                
+                if(body[0].y === 0){
+                    direction = "down";
+                } 
+                else {
+                    direction = "up";    
+                }
+            }}
+
+//----------------------------------------------------------------
+
+            if (direction === "left") {
+                body.unshift({x: body[0].x - 1, y: body[0].y});
+                body.pop();
+            
+
+            if (body[0].x === 0) {
+                
+                if(body[0].y === 0){
+                    direction = "down";
+                } 
+                else {
+                    direction = "up";    
+                }
+            }}
+           
+//----------------------------------------------------------------
+
+            if (direction === "up") {
+                body.unshift({x: body[0].x, y: body[0].y - 1});
+                body.pop();
+            
+
+            if (body[0].y === 0) {
+                if (body[0].x === 0) {
+                    direction = "right";    
+                } else {
+                    direction = "left";    
+                }   
+            }}
+
+//----------------------------------------------------------------
+
+            if (direction === "down") {
+                body.unshift({x: body[0].x, y: body[0].y + 1});
+                body.pop();
+            
+            if (body[0].y === 9) {
+
+                if (body[0].x === 9) {
+                    direction = "left";    
+                } else {
+                    direction = "right";    
+                }
+    
+        }}
+
+//--------------------------sterowanie----------------------------
+
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "ArrowUp" && direction !== "down") {
+                direction = "up";
+            } else if (event.key === "ArrowDown" && direction !== "up") {
+                direction = "down";
+            } else if (event.key === "ArrowLeft" && direction !== "right") {
+                direction = "left";
+            } else if (event.key === "ArrowRight" && direction !== "left") {
+                direction = "right";
+            }
+        });
+        
+ //--------------------------owoce-------------------------------
+
+            if(owoce.length === 0){
+            px = Math.floor(Math.random() * 10) * size;
+            py = Math.floor(Math.random() * 10) * size;
+                owoce.push({x: px, y: py});
+            }
+
+            ctx.beginPath();
+            ctx.arc(owoce[0].x + size / 2, owoce[0].y + size / 2, size / 2, 0, Math.PI * 2);
+            ctx.stroke();              
+               
+            if(body[0].x === owoce[0].x / size && body[0].y === owoce[0].y / size){
+                body.push({x: body[body.length - 1].x, y: body[body.length - 1].y});
+                owoce.shift();
+            }
+
+//--------------------------kolizja-------------------------------
+
+            for(let i = body.length - 1; i > 0; i--){
+                if(body[0].x === body[i].x && body[0].y === body[i].y){
+                    alert("Koniec gry! \n Twój wynik: " + (body.length - 3));
+                    body = [{x: 4, y: 4}, {x: 3, y: 4}, {x: 2, y: 4}];
+                    direction = "right";
+                    owoce = [];
+                }
+            }
+
+//------------------------wynik-------------------------------
+
+            ctx.font = "20px Arial";
+            ctx.fillText("Wynik: " + (body.length - 3), 8*size, 1*size);    
+
+    }    
+    </script>
+</body>
+</html>
