@@ -13,12 +13,6 @@
         const canvas = document.querySelector("canvas");
         const ctx = canvas.getContext("2d");
 
-
-            
-
-        
-
-
         const size = 60;
         var x,y;
         var px,py;
@@ -41,15 +35,12 @@
               ctx.strokeRect(segment.x * size, segment.y * size, size, size);
             }          
 
-
-    
             ctx.lineTo(x + size, y);
             ctx.lineTo(x + size, y + size);
             ctx.lineTo(x, y + size);
             ctx.closePath();
             ctx.fillRect(x, y, size, size);
-            ctx.stroke();
-                
+            ctx.stroke();      
 
 //---------------------------granice------------------------------
 
@@ -99,13 +90,13 @@
                     direction = "left";    
                 }   
             }}
+
 //----------------------------------------------------------------
 
             if (direction === "down") {
                 body.unshift({x: body[0].x, y: body[0].y + 1});
                 body.pop();
             
-
             if (body[0].y === 9) {
 
                 if (body[0].x === 9) {
@@ -115,10 +106,6 @@
                 }
     
         }}
-
-    
-
-//----------------------------------------------------------------
 
 //--------------------------sterowanie----------------------------
 
@@ -134,14 +121,8 @@
             }
         });
         
-        
-
-
  //--------------------------owoce-------------------------------
 
-
-
-            
             if(owoce.length === 0){
             px = Math.floor(Math.random() * 10) * size;
             py = Math.floor(Math.random() * 10) * size;
@@ -156,7 +137,6 @@
                 body.push({x: body[body.length - 1].x, y: body[body.length - 1].y});
                 owoce.shift();
             }
-        
 
 //--------------------------kolizja-------------------------------
 
@@ -169,16 +149,12 @@
                 }
             }
 
-
-
 //------------------------wynik-------------------------------
 
             ctx.font = "20px Arial";
-            ctx.fillText("Wynik: " + (body.length - 3), 8*size, 1*size);
-    
+            ctx.fillText("Wynik: " + (body.length - 3), 8*size, 1*size);    
 
-    }
-    
+    }    
     </script>
 </body>
 </html>
