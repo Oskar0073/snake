@@ -6,155 +6,148 @@
     <title>Gra</title>
 </head>
 <body>
-    <canvas id="myCanvas" width="600" height="600" style="border:1px solid #000000;">
-</canvas>
+    <canvas id="myCanvas" width="600" height="600" style="border:1px solid #000000;"></canvas>
     <script>
 
         const canvas = document.querySelector("canvas");
         const ctx = canvas.getContext("2d");
+        
+        const Rozmiar = 60;
 
-        const size = 60;
+        const PrawaGranica = 9;
+        const DolnaGranica = 9;
+        const LewaGranica = 0;
+        const GornaGranica = 0;
+
+        const Gora= "gora";
+        const Dol = "dol";
+        const Lewo = "lewo";
+        const Prawo = "prawo";
+
         var x,y;
-        var px,py;
-        var direction = "right";
-        setInterval(draw, 500);
-   
+        var OwocX,OwocY;
 
-        let body = [{x: 4, y: 4}, {x: 3, y: 4}, {x: 2, y: 4}];
+        var Kierunek = Prawo;
+        var Szybkosc = 500;
+        setInterval(rysuj, Szybkosc);
 
-        let owoce = [];
+        let Waz = [{x: 4, y: 4}, {x: 3, y: 4}, {x: 2, y: 4}];
 
-        function draw() {
+        let Owoce = [];     
+
+        function rysuj() {
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);        
             ctx.beginPath();
 
-            for (let i = 0; i < body.length; i++) {
-              const segment = body[i];
-               ctx.fillRect(segment.x * size, segment.y * size, size, size);
-              ctx.strokeRect(segment.x * size, segment.y * size, size, size);
+            for (let i = 0; i < Waz.length; i++) {
+                const Kawalek = Waz[i];
+                ctx.fillRect(Kawalek.x * Rozmiar, Kawalek.y * Rozmiar, Rozmiar, Rozmiar);
+                ctx.strokeRect(Kawalek.x * Rozmiar, Kawalek.y * Rozmiar, Rozmiar, Rozmiar);
             }          
 
-            ctx.lineTo(x + size, y);
-            ctx.lineTo(x + size, y + size);
-            ctx.lineTo(x, y + size);
+            ctx.lineTo(x + Rozmiar, y);
+            ctx.lineTo(x + Rozmiar, y + Rozmiar);
+            ctx.lineTo(x, y + Rozmiar);
             ctx.closePath();
-            ctx.fillRect(x, y, size, size);
-            ctx.stroke();      
+            ctx.fillRect(x, y, Rozmiar, Rozmiar);
+            ctx.stroke();
 
 //---------------------------granice------------------------------
 
-            if (direction === "right") {
-                body.unshift({x: body[0].x + 1, y: body[0].y});
-                body.pop();
+            if (Kierunek === Prawo) {
+                Waz.unshift({x: Waz[0].x + 1, y: Waz[0].y});
+                Waz.pop();
             
 
-            if(body[0].x >= 9){
-                
-                if(body[0].y === 0){
-                    direction = "down";
-                } 
-                else {
-                    direction = "up";    
-                }
+            if (Waz[0].x >= PrawaGranica) {
+                Kierunek = Waz[0].y === GornaGranica ? Dol : Gora;
             }}
 
 //----------------------------------------------------------------
 
-            if (direction === "left") {
-                body.unshift({x: body[0].x - 1, y: body[0].y});
-                body.pop();
+            if (Kierunek === Lewo) {
+                Waz.unshift({x: Waz[0].x - 1, y: Waz[0].y});
+                Waz.pop();
             
 
-            if (body[0].x === 0) {
-                
-                if(body[0].y === 0){
-                    direction = "down";
-                } 
-                else {
-                    direction = "up";    
-                }
+            if (Waz[0].x === LewaGranica) {
+                Kierunek = Waz[0].y === GornaGranica ? Dol : Gora;
             }}
            
 //----------------------------------------------------------------
 
-            if (direction === "up") {
-                body.unshift({x: body[0].x, y: body[0].y - 1});
-                body.pop();
+            if (Kierunek === Gora) {
+                Waz.unshift({x: Waz[0].x, y: Waz[0].y - 1});
+                Waz.pop();
             
 
-            if (body[0].y === 0) {
-                if (body[0].x === 0) {
-                    direction = "right";    
-                } else {
-                    direction = "left";    
-                }   
+            if (Waz[0].y === GornaGranica) {
+                Kierunek = Waz[0].x === LewaGranica ? Prawo : Lewo;
             }}
-
 //----------------------------------------------------------------
 
-            if (direction === "down") {
-                body.unshift({x: body[0].x, y: body[0].y + 1});
-                body.pop();
+            if (Kierunek === Dol) {
+                Waz.unshift({x: Waz[0].x, y: Waz[0].y + 1});
+                Waz.pop();
             
-            if (body[0].y === 9) {
 
-                if (body[0].x === 9) {
-                    direction = "left";    
-                } else {
-                    direction = "right";    
-                }
-    
-        }}
+            if (Waz[0].y === DolnaGranica) {
+                Kierunek = Waz[0].x === PrawaGranica ? Lewo : Prawo;
+            }}
 
 //--------------------------sterowanie----------------------------
 
+        const kierunki  = {
+        ArrowUp:    { k: Gora,    opp: Dol  },
+        ArrowDown:  { k: Dol,  opp: Gora    },
+        ArrowLeft:  { k: Lewo,  opp: Prawo },
+        ArrowRight: { k: Prawo, opp: Lewo  },
+        };
+
         document.addEventListener("keydown", function(event) {
-            if (event.key === "ArrowUp" && direction !== "down") {
-                direction = "up";
-            } else if (event.key === "ArrowDown" && direction !== "up") {
-                direction = "down";
-            } else if (event.key === "ArrowLeft" && direction !== "right") {
-                direction = "left";
-            } else if (event.key === "ArrowRight" && direction !== "left") {
-                direction = "right";
-            }
+        const d = kierunki[event.key];
+        if (d && Kierunek !== d.opp) Kierunek = d.k;
         });
         
  //--------------------------owoce-------------------------------
-
-            if(owoce.length === 0){
-            px = Math.floor(Math.random() * 10) * size;
-            py = Math.floor(Math.random() * 10) * size;
-                owoce.push({x: px, y: py});
+            
+            if (Owoce.length === 0) {
+            OwocX = Math.floor(Math.random() * 10) * Rozmiar;
+            OwocY = Math.floor(Math.random() * 10) * Rozmiar;
+                Owoce.push({x: OwocX, y: OwocY});
             }
 
             ctx.beginPath();
-            ctx.arc(owoce[0].x + size / 2, owoce[0].y + size / 2, size / 2, 0, Math.PI * 2);
+            ctx.arc(Owoce[0].x + Rozmiar / 2, Owoce[0].y + Rozmiar / 2, Rozmiar / 2, 0, Math.PI * 2);
             ctx.stroke();              
                
-            if(body[0].x === owoce[0].x / size && body[0].y === owoce[0].y / size){
-                body.push({x: body[body.length - 1].x, y: body[body.length - 1].y});
-                owoce.shift();
+            if (Waz[0].x === Owoce[0].x / Rozmiar && Waz[0].y === Owoce[0].y / Rozmiar) {
+                Waz.push({x: Waz[Waz.length - 1].x, y: Waz[Waz.length - 1].y});
+                Owoce.shift();
             }
-
+        
 //--------------------------kolizja-------------------------------
 
-            for(let i = body.length - 1; i > 0; i--){
-                if(body[0].x === body[i].x && body[0].y === body[i].y){
-                    alert("Koniec gry! \n Twój wynik: " + (body.length - 3));
-                    body = [{x: 4, y: 4}, {x: 3, y: 4}, {x: 2, y: 4}];
-                    direction = "right";
-                    owoce = [];
+            for (let i = Waz.length - 1; i > 0; i--) {
+                if (Waz[0].x === Waz[i].x && Waz[0].y === Waz[i].y) {
+                    alert("Koniec gry! \n Twój wynik: " + (Waz.length - 3));
+                    Waz = [{x: 4, y: 4}, {x: 3, y: 4}, {x: 2, y: 4}];
+                    Kierunek = Prawo;
+                    Owoce = [];
                 }
             }
 
-//------------------------wynik-------------------------------
+//----------------------------wynik-------------------------------
 
             ctx.font = "20px Arial";
-            ctx.fillText("Wynik: " + (body.length - 3), 8*size, 1*size);    
+            ctx.fillText("Wynik: " + (Waz.length - 3), (PrawaGranica * Rozmiar) - Rozmiar * 2, 1 * Rozmiar);
 
-    }    
+            if (Waz.length - 3 === 100) {
+                alert("Wygrałeś!!!");
+            }   
+    }
+    
     </script>
 </body>
 </html>
